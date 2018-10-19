@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="dateId" type="id"/>
+    <item name="homeTeamNameId" type="id"/>
+    <item name="homeTeamScoreId" type="id"/>
+    <item name="awayTeamNameId" type="id"/>
+    <item name="awayTeamScoreId" type="id"/>
+    <item name="list_match" type="id"/>
+    <item name="prev_match" type="id"/>
+    <item name="next_match" type="id"/>
+    <item name="favorite_match" type="id"/>
+    <item name="spinnerMatch" type="id"/>
+</resources>
