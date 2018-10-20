@@ -16,6 +16,9 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class MatchPresenterTest {
 
@@ -29,6 +32,9 @@ class MatchPresenterTest {
     private lateinit var gson: Gson
 
     private lateinit var presenter: MatchPresenter
+
+    private val lock = ReentrantLock()
+    private val condition = lock.newCondition()
 
     @Before
     fun setupEnv() {
@@ -64,11 +70,19 @@ class MatchPresenterTest {
                 MatchResponse::class.java)
         ).thenReturn(response)
 
-        presenter.getPrevMatchList(id)
+        lock.withLock {
+            presenter.getPrevMatchList(id)
+            if(id.isEmpty()) {
+                condition.await()
+            }
+            condition.signal()
+            condition.signalAll()
+        }
 
         verify(view).showLoading()
         verify(view).showPrevMatchList(match)
         verify(view).hideLoading()
+
     }
 
     @Test
@@ -82,10 +96,18 @@ class MatchPresenterTest {
                 MatchResponse::class.java)
         ).thenReturn(response)
 
-        presenter.getNextMatchList(id)
+        lock.withLock {
+            presenter.getNextMatchList(id)
+            if(id.isEmpty()) {
+                condition.await(1000, TimeUnit.MILLISECONDS)
+            }
+            condition.signal()
+            condition.signalAll()
+        }
 
         verify(view).showLoading()
         verify(view).showNextMatchList(match)
         verify(view).hideLoading()
+
     }
 }
